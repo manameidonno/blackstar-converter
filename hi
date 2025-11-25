@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Blackstar Letter Converter</title>
+<style>
+body {
+    background: white;
+    color: black;
+    font-family: sans-serif;
+    text-align: center;
+    padding: 20px;
+}
+#inputBox {
+    width: 80%;
+    padding: 10px;
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+#result {
+    margin-top: 20px;
+    min-height: 120px;
+    padding: 10px;
+    border: 1px dashed #555;
+}
+#result img {
+    width: 35px;
+    margin: 2px;
+    vertical-align: middle;
+}
+button {
+    padding: 10px 20px;
+    background: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+#notice {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #555;
+}
+</style>
+</head>
+<body>
+
+<h2>Blackstar Letter Converter</h2>
+
+<input id="inputBox" type="text" placeholder="영어 문장을 입력하세요">
+
+<br>
+
+<button onclick="convert()">변환</button>
+
+<div id="result"></div>
+
+<div id="notice"></div>
+
+<script>
+// 확장자 문제 고려
+function resolveImage(baseName, imgElement, fallbacks = ['.png', '.PNG']) {
+    let i = 0;
+    function tryNext() {
+        if (i >= fallbacks.length) {
+            imgElement.src = 'placeholder.png';
+            imgElement.classList.add('missing');
+            return;
+        }
+        imgElement.src = baseName + fallbacks[i];
+        i++;
+    }
+    imgElement.onerror = tryNext;
+    tryNext();
+}
+
+function convert() {
+    const text = document.getElementById("inputBox").value;
+    const output = document.getElementById("result");
+    const notice = document.getElementById("notice");
+
+    output.innerHTML = "";
+    notice.innerHTML = "";
+
+    for (let char of text) {
+        let lower = char.toLowerCase();
+
+        if (lower >= 'a' && lower <= 'z') {
+            const imgList = []; // m/w일 경우 2개 이미지
+
+            if (lower === 'm') {
+                imgList.push(`starM1`, `starM2`);
+            } else if (lower === 'w') {
+                imgList.push(`starW1`, `starW2`);
+            } else {
+                imgList.push(`star${lower.toUpperCase()}`);
+            }
+
+            for (let baseName of imgList) {
+                const img = document.createElement("img");
+                resolveImage(baseName, img, ['.png', '.PNG']);
+                output.appendChild(img);
+            }
+        } else {
+            if (char === " ") {
+                const space = document.createElement("span");
+                space.style.display = "inline-block";
+                space.style.width = "15px";
+                output.appendChild(space);
+            }
+        }
+    }
+
+    if (text.trim() !== "") {
+        notice.innerHTML = "화면을 캡쳐하여 사용하세요.";
+    }
+}
+</script>
+
+</body>
+</html>
